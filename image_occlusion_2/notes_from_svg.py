@@ -14,7 +14,16 @@ import time
 
 from PyQt4 import QtGui
 
-def add_notes_non_overlapping(svg, q_color, tags):
+useless_attribs = ['id', # there might be a problem when editing...
+                   'stroke-dasharray',
+                   'stroke-linecap',
+                   'stroke-linejoin',
+                   # If stroke-opacity=0, these are irrelevant:
+                   'stroke-opacity',
+                   'stroke']
+
+
+def add_notes_non_overlapping(svg, q_color, tags, fname_original, header, footer):
     svg = copy.deepcopy(svg)
     color = "#" + q_color
     
@@ -24,66 +33,46 @@ def add_notes_non_overlapping(svg, q_color, tags):
     # Get a temporary directory to store the images
     media_dir = tempfile.mkdtemp(prefix="media-for-anki")
     
+    svg_no_pic = copy.deepcopy(svg)
+    svg_no_pic.remove(svg_no_pic[0])
+    strip_attributes(svg_no_pic, useless_attribs)
     svg_fname = os.path.join(media_dir, "source_svg.svg")
     f = open(svg_fname, 'w')
-    f.write(etree.tostring(svg))
+    f.write(etree.tostring(svg_no_pic))
     f.close()
  
     fnames_q_svg = gen_fnames_q(media_dir, nr_of_cards, 'svg')
     fnames_a_svg = gen_fnames_a(media_dir, nr_of_cards, 'svg')
     
-    fnames_q_png = gen_fnames_q(media_dir, nr_of_cards, 'png')
-    fnames_a_png = gen_fnames_a(media_dir, nr_of_cards, 'png')
-    
     # Generate the question sides of the cards:
-    for i in xrange(nr_of_cards): 
-        #  We use a deep copy because we will be destructively modifying
-        # the variable svg_i
+    for i in xrange(nr_of_cards):
         svg_i = copy.deepcopy(svg)
-        shapes_layer = svg_i[shapes_layer_index]
-        #  We change the color of the current shape, so that the user
-        # knows what part of the label he is being asked to name
-        ## i+1 because <title> doesn't make a card!
-        set_color_recursive(shapes_layer[i+1], color)
+        shapes_layer = svg_i[shapes_layer_index] 
+        set_color_recursive(shapes_layer[i+1], q_color) ## <title>
+        svg_i.remove(svg_i[0])
+        strip_attributes(svg_i, useless_attribs)
         f = open(fnames_q_svg[i], 'w')
         f.write(etree.tostring(svg_i))
         f.close()
 
     # Generate the answer sides of the cards:
-    for i in xrange(nr_of_cards): # <title> doesn't make a card!
-        #  We use a deep copy because we will be destructively modifying
-        # the variable svg_i
+    for i in xrange(nr_of_cards):
         svg_i = copy.deepcopy(svg)
         shapes_layer = svg_i[shapes_layer_index]
-        ## i+1 because <title> doesn't make a card!
         shapes_layer.remove(shapes_layer[i+1])
+        svg_i.remove(svg_i[0])
+        strip_attributes(svg_i, useless_attribs)
         f = open(fnames_a_svg[i], 'w')
         f.write(etree.tostring(svg_i))
         f.close()
     
-    s = []
-    # Convert questions to PNG:
-    for q_svg,q_png in zip(fnames_q_svg, fnames_q_png):
-        s.append(rasterize_svg(q_svg, q_png))
-    # Convert answers to PNG:
-    for a_svg,a_png in zip(fnames_a_svg, fnames_a_png):
-        s.append(rasterize_svg(a_svg, a_png))
-    
-    # Just a way to make the program wait... Ugly hack
-    QtGui.QMessageBox.information(None, "Info", "Notes generated: " + str(len(s)/2))
-    
-    # Remove question SVGs
-    for q_svg in fnames_q_svg:
-        os.remove(q_svg)
-    # Remove answer SVGs
-    for a_svg in fnames_a_svg:
-        os.remove(a_svg)
-    
-    add_notes.gui_add_QA_notes(fnames_q_png, fnames_a_png, media_dir, tags, svg_fname)
+    add_notes.gui_add_QA_notes(fnames_q_svg, fnames_a_svg,
+                               media_dir, tags, svg_fname, fname_original,
+                               header, footer)
     
     return media_dir
 
-def add_notes_overlapping(svg, q_color, tags):
+def add_notes_overlapping(svg, q_color, tags, fname_original, header, footer):
     svg = copy.deepcopy(svg)
     color = "#" + q_color
     
@@ -93,16 +82,16 @@ def add_notes_overlapping(svg, q_color, tags):
     # Get a temporary directory to store the images
     media_dir = tempfile.mkdtemp(prefix="media-for-anki")
     
+    svg_no_pic = copy.deepcopy(svg)
+    svg_no_pic.remove(svg_no_pic[0])
+    strip_attributes(svg_no_pic, useless_attribs)
     svg_fname = os.path.join(media_dir, "source_svg.svg")
     f = open(svg_fname, 'w')
-    f.write(etree.tostring(svg))
+    f.write(etree.tostring(svg_no_pic))
     f.close()
  
     fnames_q_svg = gen_fnames_q(media_dir, nr_of_cards, 'svg')
     fname_a_svg = gen_fnames_a(media_dir, 1, 'svg')[0]
-    
-    fnames_q_png = gen_fnames_q(media_dir, nr_of_cards, 'png')
-    fname_a_png = gen_fnames_a(media_dir, 1, 'png')[0]
     
     # Generate the question sides of the cards:
     for i in xrange(nr_of_cards): 
@@ -110,7 +99,8 @@ def add_notes_overlapping(svg, q_color, tags):
         # the variable svg_i
         svg_i = copy.deepcopy(svg)
         shapes_layer = svg_i[shapes_layer_index]
-        shapes = [shapes_layer[j+1] for j in xrange(nr_of_cards)]
+        shapes = [shapes_layer[j+1] for j in xrange(nr_of_cards)] # j+1 stays because
+          # we wat the modifications to be destructive. Bad style, but who cares...
         j = 0
         for shape in shapes:
             if j == i:
@@ -118,37 +108,24 @@ def add_notes_overlapping(svg, q_color, tags):
             else:
                 shapes_layer.remove(shape)
             j = j+1
-                
+        svg_i.remove(svg_i[0]) # remove 'Picture' layer
+        strip_attributes(svg_i, useless_attribs)    
+            
         f = open(fnames_q_svg[i], 'w')
         f.write(etree.tostring(svg_i))
         f.close()
     
-    # Generate the answer side of the cards by deleting all masks
     svg_a = copy.deepcopy(svg)
-    shapes_layer = svg_a[shapes_layer_index]
-    shapes = [shapes_layer[j+1] for j in xrange(nr_of_cards)]
-    for shape in shapes:
-        shapes_layer.remove(shape)
+    svg_a[shapes_layer_index].clear()
+    svg_a.remove(svg_a[0])
     # Generate the answer side of the cards:
     f = open(fname_a_svg, 'w')
-    f.write(etree.tostring(svg_a))
+    f.write(etree.tostring(svg_a)) # Write dummy file
     f.close()
     
-    s = []
-    # Convert questions to PNG:
-    for q_svg,q_png in zip(fnames_q_svg, fnames_q_png):
-        s.append(rasterize_svg(q_svg, q_png))
-    # Convert answers to PNG:
-    s.append(rasterize_svg(fname_a_svg, fname_a_png))
-
-    # Just a way to make the program wait... Ugly hack
-    QtGui.QMessageBox.information(None, "Info", "Notes generated: " + str(len(s)-1))
-    
-    for q_svg in fnames_q_svg:
-        os.remove(q_svg)
-    os.remove(fname_a_svg)
-    
     # add notes, updating the GUI:
-    add_notes.gui_add_QA_notes(fnames_q_png, [fname_a_png]*nr_of_cards, media_dir, tags, svg_fname)
+    add_notes.gui_add_QA_notes(fnames_q_svg, [fname_a_svg]*nr_of_cards,
+                               media_dir, tags, svg_fname, fname_original,
+                               header, footer)
     
     return media_dir

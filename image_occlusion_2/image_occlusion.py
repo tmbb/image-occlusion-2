@@ -5,15 +5,14 @@ from aqt import mw, utils, webview
 from aqt.qt import *
 from anki import hooks
 
-#import urllib
 import os
 import base64
 import tempfile
 import socket
 import sys
 
-def addons_folder(): return mw.pm.addonFolder() 
 
+def addons_folder(): return mw.pm.addonFolder() 
 
 import etree.ElementTree as etree
 
@@ -68,7 +67,7 @@ class ImageOcc_Add(QtCore.QObject):
         super(QtCore.QObject, self).__init__()
         self.ed = ed
         self.mw = mw
-        if not 'image_occlusion_conf' in mw.col.conf:
+        if not 'image_occlusion_conf' in mw.col.conf: # If addon has never been run
             self.mw.col.conf['image_occlusion_conf'] = default_conf
     
     
@@ -77,8 +76,9 @@ class ImageOcc_Add(QtCore.QObject):
         if clip.mimeData().imageData():
             handle, image_path = tempfile.mkstemp(suffix='.png')
             clip.image().save(image_path)
-            self.call_svg_edit(image_path)
+            self.image_path = image_path
             clip.clear()
+            self.call_ImageOcc_Editor(image_path)
         
         else:
             image_path = QtGui.QFileDialog.getOpenFileName(None, # parent
@@ -86,44 +86,38 @@ class ImageOcc_Add(QtCore.QObject):
                                                        os.path.expanduser('~'),
                                                        FILE_DIALOG_FILTER)
             if image_path:
-                self.call_svg_edit(image_path)
-        
-        
-    def call_svg_edit(self, path):
+                self.image_path = image_path
+                self.call_ImageOcc_Editor(image_path)
+            
+    def call_ImageOcc_Editor(self, path):
         d = svgutils.image2svg(path)
         svg = d['svg']
         svg_b64 = d['svg_b64']
         height = d['height']
         width = d['width']
-
                                 
         try:
-            self.mw.svg_edit is not None
+            self.ImageOcc_Editor is not None
             select_rect_tool = "svgCanvas.setMode('rect'); "
             set_svg_content = 'svg_content = \'%s\'; ' % svg.replace('\n','')
             set_canvas = 'svgCanvas.setSvgString(svg_content);'
             
             command = select_rect_tool + set_svg_content + set_canvas
             
-            self.mw.svg_edit.eval(command)
+            self.mw.ImageOcc_Editor.svg_edit.eval(command)
         
         except:
-            
             initFill_color = mw.col.conf['image_occlusion_conf']['initFill[color]']
             url = svg_edit_url
             url.addQueryItem('initFill[color]', initFill_color)
             url.addQueryItem('dimensions', '{0},{1}'.format(width,height))
             url.addQueryItem('source', svg_b64)
             
-            self.mw.svg_edit = webview.AnkiWebView()
+            tags = self.ed.note.tags
+            self.ImageOcc_Editor = ImageOcc_Editor(tags)
             
-            def onLoadFinished(result):
-                if result:
-                    self.mw.svg_edit.show()
-            
-            self.mw.svg_edit.connect(self.mw.svg_edit, QtCore.SIGNAL("loadFinished(bool)"), onLoadFinished)
-            self.mw.svg_edit.page().mainFrame().addToJavaScriptWindowObject("pyObj", self)
-            self.mw.svg_edit.load(url)
+            self.ImageOcc_Editor.svg_edit.page().mainFrame().addToJavaScriptWindowObject("pyObj", self)
+            self.ImageOcc_Editor.svg_edit.load(url)            
 
     
     @QtCore.pyqtSlot(str)
@@ -132,9 +126,13 @@ class ImageOcc_Add(QtCore.QObject):
         # Get the mask color from mw.col.conf:
         mask_fill_color = mw.col.conf['image_occlusion_conf']['mask_fill_color']
         # Get tags:
-        tags = self.ed.note.tags
+        tags = self.ImageOcc_Editor.tags_edit.text().split()
+        header = self.ImageOcc_Editor.header_edit.text()
+        footer = self.ImageOcc_Editor.footer_edit.text()
         # Add notes to the current deck of the collection:
-        notes_from_svg.add_notes_non_overlapping(svg, mask_fill_color, tags)
+        notes_from_svg.add_notes_non_overlapping(svg, mask_fill_color,
+                                                 tags, self.image_path,
+                                                 header, footer)
     
     @QtCore.pyqtSlot(str)
     def add_notes_overlapping(self, svg_contents):
@@ -142,15 +140,81 @@ class ImageOcc_Add(QtCore.QObject):
         # Get the mask color from mw.col.conf:
         mask_fill_color = mw.col.conf['image_occlusion_conf']['mask_fill_color']
         # Get tags:
-        tags = self.ed.note.tags
+        tags = self.ImageOcc_Editor.tags_edit.text().split()
+        header = self.ImageOcc_Editor.header_edit.text()
+        footer = self.ImageOcc_Editor.footer_edit.text()
         # Add notes to the current deck of the collection:
-        notes_from_svg.add_notes_overlapping(svg, mask_fill_color, tags)
+        notes_from_svg.add_notes_overlapping(svg, mask_fill_color,
+                                             tags, self.image_path,
+                                             header, footer)
 
 def add_image_occlusion_button(ed):
     ed.image_occlusion = ImageOcc_Add(ed)
     ed._addButton("image_occlusion", ed.image_occlusion.add_notes,
             key="Alt+o", size=False, text=_("Image Occlusion"),
             native=True, canDisable=False)
+
+class ImageOcc_Editor(QWidget):
+    def __init__(self, tags):
+        super(ImageOcc_Editor, self).__init__()
+        self.initUI(tags)
+    
+    def initUI(self, tags):
+        ##############################################
+        ### From top to bottom:
+        ##############################################
+        ## header_label # self.header_edit
+        ##############################################
+        ## self.svg_edit
+        ##############################################
+        ## footer_label # self.footer
+        ##############################################
+        ## tags_label # self.tags_edit
+        ##############################################
+        
+        # Header
+        self.header_edit = QLineEdit()
+        self.header_edit.setPlaceholderText("(optional)")
+        header_label = QLabel("Header: ")
+
+        header_hbox = QHBoxLayout()
+        header_hbox.addWidget(header_label)
+        header_hbox.addWidget(self.header_edit)
+        
+        # svg-edit
+        self.svg_edit = webview.AnkiWebView()
+        
+        # Footer
+        self.footer_edit = QLineEdit()
+        self.footer_edit.setPlaceholderText("(optional)")
+        footer_label = QLabel("Footer: ")
+
+        footer_hbox = QHBoxLayout()
+        footer_hbox.addWidget(footer_label)
+        footer_hbox.addWidget(self.footer_edit)
+        
+        # Tags
+        self.tags_edit = QLineEdit()
+        self.tags_edit.setText(" ".join(tags))
+        tags_label = QLabel("Tags: ")
+
+        tags_hbox = QHBoxLayout()
+        tags_hbox.addWidget(tags_label)
+        tags_hbox.addWidget(self.tags_edit)
+        
+        
+        vbox = QVBoxLayout()
+        vbox.addStretch(1)
+        vbox.addLayout(header_hbox)
+        vbox.addWidget(self.svg_edit)
+        vbox.addLayout(footer_hbox)
+        vbox.addLayout(tags_hbox)
+        
+        self.setLayout(vbox)
+        self.setMinimumHeight(600)
+        
+        self.setWindowTitle('Image Occlusion Editor')
+        self.show()
 
 class ImageOcc_Options(QtGui.QWidget):
     def __init__(self, mw):

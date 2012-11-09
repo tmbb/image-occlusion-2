@@ -22,31 +22,22 @@ def add_notes_non_overlapping(svg, q_color):
     fnames_q_svg = gen_fnames_q(media_dir, nr_of_cards, 'svg')
     fnames_a_svg = gen_fnames_a(media_dir, nr_of_cards, 'svg')
     
-    fnames_q_png = gen_fnames_q(media_dir, nr_of_cards, 'png')
-    fnames_a_png = gen_fnames_a(media_dir, nr_of_cards, 'png')
-    
     # Generate the question sides of the cards:
-    for i in xrange(nr_of_cards): 
-        #  We use a deep copy because we will be destructively modifying
-        # the variable svg_i
+    for i in xrange(nr_of_cards):
         svg_i = copy.deepcopy(svg)
-        shapes_layer = svg_i[shapes_layer_index]
-        #  We change the color of the current shape, so that the user
-        # knows what part of the label he is being asked to name
-        ## i+1 because <title> doesn't make a card!
-        set_color_recursive(shapes_layer[i+1], q_color)
+        shapes_layer = svg_i[shapes_layer_index][1:] ## <title>
+        set_color_recursive(shapes_layer[i], q_color)
+        svg_i.remove(svg_i[0])
         f = open(fnames_q_svg[i], 'w')
         f.write(etree.tostring(svg_i))
         f.close()
 
     # Generate the answer sides of the cards:
-    for i in xrange(nr_of_cards): # <title> doesn't make a card!
-        #  We use a deep copy because we will be destructively modifying
-        # the variable svg_i
+    for i in xrange(nr_of_cards):
         svg_i = copy.deepcopy(svg)
-        shapes_layer = svg_i[shapes_layer_index]
-        ## i+1 because <title> doesn't make a card!
-        shapes_layer.remove(shapes_layer[i+1])
+        shapes_layer = svg_i[shapes_layer_index][1:] ## <title>
+        shapes_layer.remove(shapes_layer[i])
+        svg_i.remove(svg_i[0])
         f = open(fnames_a_svg[i], 'w')
         f.write(etree.tostring(svg_i))
         f.close()
