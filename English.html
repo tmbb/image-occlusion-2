@@ -36,11 +36,6 @@ Occlusion 2.0 User Manual</h1>
 tmbb@campus.ul.pt</address>
 <ul id="mozToc">
 <!--mozToc h1 1 h2 2 h3 3-->
-  <li><a href="#mozTocId967830">ImageOcc2.0</a>
-    <ul>
-      <li><a href="#mozTocId20573">Image Occlusion addon for Anki</a></li>
-    </ul>
-  </li>
   <li><a href="#mozTocId184221">Image
 Occlusion 2.0 User Manual</a>
     <ul>
@@ -78,8 +73,8 @@ test</a>).<br>
 <br>
 In practice, you will often have an image with labels, and you will
 hide the labels which you want to guess during the repetitions. Because
-an image is worth 1000 words (these are just two of 38 cards generated
-from the image):<br>
+an image is worth 1000 words (this are just one of 38 cards generated
+at once from the original image):<br>
 <br>
 </div>
 <table style="text-align: left; width: 1120px; height: 60px;" border="1"
@@ -155,9 +150,8 @@ instructions</h3>
 <div style="text-align: left;">Choose the image file you want to use (I
 chose an image from <a
  href="http://www.amazon.com/Atlas-Human-Anatomy-Student-Consult/dp/1416059512">Netter's
-atlas</a>, depicting a deep dissection of the muscles of the thigh).
-You can also <a
- href="../help/Image%20Occlusion%202.0%20-%20Help%20page.html#clipboard">use
+atlas</a>, depicting a deep dissection of the muscles of the thigh).<br>
+You can also <a href="#clipboard">use
 an image from the clipboard</a>.<br>
 <br>
 </div>
@@ -176,8 +170,13 @@ notes. This is how you supply tags to the Image Occlusion cards.
 Changing the tags in teh note editor doesn't affect the tags of the
 Image Occlusion cards.</li>
 </ol>
+You can also select the <span style="font-weight: bold;">deck</span>
+to which your cards will be added, by clicking the button at the
+bottom. This button works just like the Choose Deck dialog in the Anki
+note editor.<br>
+<br>
 These images don't show these features because they are from the
-previous version. They have not been updated not updated due to lack of
+previous version. They have not been updated due to lack of
 time.<br>
 <br>
 <img style="width: 816px; height: 677px;" src="images/editor.png" alt="">
@@ -267,8 +266,8 @@ Overlapping<br>
       <td style="vertical-align: top; width: 64px; text-align: left;"><img
  style="width: 31px; height: 32px;" src="images/button_overlapping.png"
  alt=""></td>
-      <td style="vertical-align: top; width: 665px; text-align: left;">
-(<span style="text-decoration: underline;">Mnemonic</span>: notice that
+      <td style="vertical-align: top; width: 665px; text-align: left;">(<span
+ style="text-decoration: underline;">Mnemonic</span>: notice that
 the
 two shapes overlap)</td>
     </tr>
@@ -524,10 +523,9 @@ menu of Anki's main window:<br>
 <h2 style="text-align: left;"><a class="mozTocH2" name="mozTocId396176"></a>Plans
 for the future</h2>
 <div style="text-align: left;">The most important issue that needs to
-be solved is the <a
- href="../help/Image%20Occlusion%202.0%20-%20Help%20page.html#big_bug">major
+be solved is the <a href="#big_bug">major
 bug</a>
-(not the same one as the previous version; that one has a decent
+(not the same one a previous version; that one has a decent
 workaround now) described in the FAQ, but this is currently out of my
 control. Suggestions are accepted and deeply appreciated.<br>
 <br>
@@ -549,7 +547,8 @@ old rectangle). <a
  href="http://ehmdunque.altervista.org/i-informatica/manuali/Short_intro_SVG-edit.html">This
 tutorial</a> is also very helpful.<br>
 <span style="font-weight: bold;"></span><br>
-<span style="font-weight: bold;">Sometimes, the editor refuses to
+<span style="font-weight: bold;"><a name="big_bug"></a>Sometimes, the
+editor refuses to
 appear correctly. Why?</span>
 This is probably due to a bug in <a
  href="http://qt-project.org/doc/qt-4.7/">Qt</a>
@@ -560,13 +559,12 @@ displayed correctly the first time it is used, but if I try to use it
 again without restarting Anki, it fails to appear correctly. If I
 restart Anki, the editor works again. In your system it may be
 different. To avoid this situation, please keep the image editor window
-open until you shut Anki down. This way, you should be able to add
+open until you shut down Anki. This way, you should be able to add
 Image Occlusion cards from as many images as you want. This is not an
 ideal situation, and it might be fixed in a new addon version.<br>
 <br>
 <span style="font-weight: bold;">Can I add images from the clipboard?</span>
-<a
- href="../help/Image%20Occlusion%202.0%20-%20Help%20page.html#clipboard">YES
+<a href="#clipboard">YES
 YOU CAN!</a> :)<br>
 <br>
 <span style="font-weight: bold;">Why is this addon called <span
@@ -579,14 +577,14 @@ consider this one to be a successor of <span
  style="font-style: italic;">Image Occlusion</span>,
 because it is better integrated with Anki, much easier to install and
 more customizable than what I managed to do while interfacing Anki with
-Inkscape. However, because of the <a
- href="../help/Image%20Occlusion%202.0%20-%20Help%20page.html#big_bug">major
+Inkscape. However, because of the <a href="#big_bug">major
 bug</a>
 discussed in the previous question<span style="font-weight: bold;"></span>,
 I can't just remove the previous addon and replace it by this one.
 That's why I had to give it a new name. That said, my other addon is
 also
-notoriously buggy in some systems (probably a bug in Inkscape), so
+notoriously buggy in some systems, and usually fails to work at all in
+most Linux systems (probably a bug in Inkscape), so
 those who can't setup <span style="font-style: italic;">Image Occlusion</span>
 correctly, might want to try <span style="font-style: italic;">Image
 Occlusion 2.0</span>.<br>
