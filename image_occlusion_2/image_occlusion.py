@@ -4,6 +4,8 @@ from PyQt4 import QtCore, QtGui, QtWebKit
 from aqt import mw, utils, webview
 from aqt.qt import *
 from anki import hooks
+from aqt import deckchooser
+import aqt.forms
 
 import os
 import base64
@@ -97,14 +99,14 @@ class ImageOcc_Add(QtCore.QObject):
         width = d['width']
                                 
         try:
-            self.ImageOcc_Editor is not None
+            mw.ImageOcc_Editor is not None
             select_rect_tool = "svgCanvas.setMode('rect'); "
             set_svg_content = 'svg_content = \'%s\'; ' % svg.replace('\n','')
             set_canvas = 'svgCanvas.setSvgString(svg_content);'
             
             command = select_rect_tool + set_svg_content + set_canvas
             
-            self.mw.ImageOcc_Editor.svg_edit.eval(command)
+            mw.ImageOcc_Editor.svg_edit.eval(command)
         
         except:
             initFill_color = mw.col.conf['image_occlusion_conf']['initFill[color]']
@@ -114,39 +116,40 @@ class ImageOcc_Add(QtCore.QObject):
             url.addQueryItem('source', svg_b64)
             
             tags = self.ed.note.tags
-            self.ImageOcc_Editor = ImageOcc_Editor(tags)
+            mw.ImageOcc_Editor = ImageOcc_Editor(tags)
             
-            self.ImageOcc_Editor.svg_edit.page().mainFrame().addToJavaScriptWindowObject("pyObj", self)
-            self.ImageOcc_Editor.svg_edit.load(url)            
+            mw.ImageOcc_Editor.svg_edit.page().mainFrame().addToJavaScriptWindowObject("pyObj", self)
+            mw.ImageOcc_Editor.svg_edit.load(url)            
 
     
     @QtCore.pyqtSlot(str)
     def add_notes_non_overlapping(self, svg_contents):
         svg = etree.fromstring(svg_contents)
-        # Get the mask color from mw.col.conf:
-        mask_fill_color = mw.col.conf['image_occlusion_conf']['mask_fill_color']
-        # Get tags:
-        tags = self.ImageOcc_Editor.tags_edit.text().split()
-        header = self.ImageOcc_Editor.header_edit.text()
-        footer = self.ImageOcc_Editor.footer_edit.text()
+        mask_fill_color, did, tags, header, footer = get_params_for_add_notes()
         # Add notes to the current deck of the collection:
         notes_from_svg.add_notes_non_overlapping(svg, mask_fill_color,
                                                  tags, self.image_path,
-                                                 header, footer)
+                                                 header, footer, did)
     
     @QtCore.pyqtSlot(str)
     def add_notes_overlapping(self, svg_contents):
         svg = etree.fromstring(svg_contents)
-        # Get the mask color from mw.col.conf:
-        mask_fill_color = mw.col.conf['image_occlusion_conf']['mask_fill_color']
-        # Get tags:
-        tags = self.ImageOcc_Editor.tags_edit.text().split()
-        header = self.ImageOcc_Editor.header_edit.text()
-        footer = self.ImageOcc_Editor.footer_edit.text()
+        mask_fill_color, did, tags, header, footer = get_params_for_add_notes()
         # Add notes to the current deck of the collection:
         notes_from_svg.add_notes_overlapping(svg, mask_fill_color,
                                              tags, self.image_path,
-                                             header, footer)
+                                             header, footer, did)
+
+def get_params_for_add_notes():
+    # Get the mask color from mw.col.conf:
+    mask_fill_color = mw.col.conf['image_occlusion_conf']['mask_fill_color']
+    
+    header = mw.ImageOcc_Editor.header_edit.text()
+    footer = mw.ImageOcc_Editor.footer_edit.text()
+    # Get deck id:
+    did = mw.ImageOcc_Editor.deckChooser.selectedId()
+    tags = mw.ImageOcc_Editor.tags_edit.text().split()
+    return (mask_fill_color, did, tags, header, footer)
 
 def add_image_occlusion_button(ed):
     ed.image_occlusion = ImageOcc_Add(ed)
@@ -170,6 +173,11 @@ class ImageOcc_Editor(QWidget):
         ## footer_label # self.footer
         ##############################################
         ## tags_label # self.tags_edit
+        ##############################################
+        ## deck_container
+        ##  ########################
+        ##  # deckChooser          #
+        ##  ########################
         ##############################################
         
         # Header
@@ -202,6 +210,10 @@ class ImageOcc_Editor(QWidget):
         tags_hbox.addWidget(tags_label)
         tags_hbox.addWidget(self.tags_edit)
         
+        deck_container = QGroupBox("Deck")
+                
+        self.deckChooser = deckchooser.DeckChooser(mw, deck_container,
+                                                   label=False)
         
         vbox = QVBoxLayout()
         vbox.addStretch(1)
@@ -209,6 +221,7 @@ class ImageOcc_Editor(QWidget):
         vbox.addWidget(self.svg_edit)
         vbox.addLayout(footer_hbox)
         vbox.addLayout(tags_hbox)
+        vbox.addWidget(deck_container)
         
         self.setLayout(vbox)
         self.setMinimumHeight(600)

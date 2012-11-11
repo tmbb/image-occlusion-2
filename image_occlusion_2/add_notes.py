@@ -155,14 +155,11 @@ def fname2img(fname):
 
 
 def add_QA_note(col, fname_q, fname_a, tags, fname_svg,
-                fname_original, header, footer):
-    model_name = IMAGE_QA_MODEL_NAME
-    
-    m = col.models.byName(model_name)
-    m['did'] = col.conf['curDeck']
-
+                fname_original, header, footer, did):
+                        
+    m = col.models.byName(IMAGE_QA_MODEL_NAME)
+    m['did'] = did
     n = notes.Note(col, model=m)
-    n.did = col.conf['curDeck']
     n.fields = [fname2img(fname_q),
                 fname2img(fname_a),
                 fname2img(fname_svg),
@@ -180,7 +177,7 @@ def add_QA_note(col, fname_q, fname_a, tags, fname_svg,
 
 
 def add_QA_notes(col, fnames_q, fnames_a, tags, media_dir, svg_fname,
-                 fname_original, header, footer):
+                 fname_original, header, footer, did):
     d = new_bnames(col, media_dir, fname_original)
     nrOfNotes = 0
     for (q,a) in zip(fnames_q, fnames_a):
@@ -191,13 +188,14 @@ def add_QA_notes(col, fnames_q, fnames_a, tags, media_dir, svg_fname,
                     d[os.path.basename(svg_fname)],
                     d[os.path.basename(fname_original)],
                     header,
-                    footer)
+                    footer,
+                    did)
         nrOfNotes += 1
     return nrOfNotes
 
 # Updates the GUI and shows a tooltip
 def gui_add_QA_notes(fnames_q, fnames_a, media_dir, tags, svg_fname,
-                     fname_original, header, footer):
+                     fname_original, header, footer, did):
     col = mw.col
     mm = col.models
     if not mm.byName(IMAGE_QA_MODEL_NAME): # first time addon is run
@@ -210,10 +208,28 @@ def gui_add_QA_notes(fnames_q, fnames_a, media_dir, tags, svg_fname,
     if len(m['flds']) == 4:
         update_fields(col)
         
-    nrOfNotes = add_QA_notes(col,
-                             fnames_q, fnames_a,
+    nrOfNotes = add_QA_notes(col, fnames_q, fnames_a,
                              tags, media_dir, svg_fname,
-                             fname_original, header, footer)
-    rm_media_dir(media_dir) # removes the media and the directory      
-    mw.deckBrowser.show()
+                             fname_original, header, footer, did)
+    rm_media_dir(media_dir) # removes the media and the directory
+    
+    #  We must update the GUI so that the user knows that cards have
+    # been added.  When the GUI is updated, the number of new cards
+    # changes, and it provides the feedback we want.
+    # If we want more feedback, we can add a tooltip that tells the
+    # user how many cards have been added.
+    # The way to update the GUI will depend on the state
+    # of the main window. There are four states (from what I understand):
+    #  - "review"
+    #  - "overview"
+    #  - "deckBrowser"
+    #  - "resetRequired" (we will treat this one like "deckBrowser)
+    if mw.state == "review":
+        mw.reviewer.show()
+    elif mw.state == "overview":
+        mw.overview.refresh()
+    else:
+        mw.deckBrowser.refresh() # this shows the browser even if the
+          # main window is in state "resetRequired", which in my
+          # opinion is a good thing
     utils.tooltip(notes_added_message(nrOfNotes))

@@ -23,7 +23,8 @@ useless_attribs = ['id', # there might be a problem when editing...
                    'stroke']
 
 
-def add_notes_non_overlapping(svg, q_color, tags, fname_original, header, footer):
+def add_notes_non_overlapping(svg, q_color, tags, fname_original,
+                              header, footer, did):
     svg = copy.deepcopy(svg)
     color = "#" + q_color
     
@@ -68,11 +69,12 @@ def add_notes_non_overlapping(svg, q_color, tags, fname_original, header, footer
     
     add_notes.gui_add_QA_notes(fnames_q_svg, fnames_a_svg,
                                media_dir, tags, svg_fname, fname_original,
-                               header, footer)
+                               header, footer, did)
     
     return media_dir
 
-def add_notes_overlapping(svg, q_color, tags, fname_original, header, footer):
+def add_notes_overlapping(svg, q_color, tags, fname_original,
+                          header, footer, did):
     svg = copy.deepcopy(svg)
     color = "#" + q_color
     
@@ -100,7 +102,7 @@ def add_notes_overlapping(svg, q_color, tags, fname_original, header, footer):
         svg_i = copy.deepcopy(svg)
         shapes_layer = svg_i[shapes_layer_index]
         shapes = [shapes_layer[j+1] for j in xrange(nr_of_cards)] # j+1 stays because
-          # we wat the modifications to be destructive. Bad style, but who cares...
+          # we want the modifications to be destructive. Bad style, but whatever...
         j = 0
         for shape in shapes:
             if j == i:
@@ -126,6 +128,6 @@ def add_notes_overlapping(svg, q_color, tags, fname_original, header, footer):
     # add notes, updating the GUI:
     add_notes.gui_add_QA_notes(fnames_q_svg, [fname_a_svg]*nr_of_cards,
                                media_dir, tags, svg_fname, fname_original,
-                               header, footer)
+                               header, footer, did)
     
     return media_dir
