@@ -5,6 +5,7 @@ from aqt import mw, utils, webview
 from aqt.qt import *
 from anki import hooks
 from aqt import deckchooser
+from aqt import tagedit
 import aqt.forms
 
 import os
@@ -22,11 +23,13 @@ import svgutils
 import notes_from_svg
 
 
-image_occlusion_help_link = "file:///" +\
-    os.path.join(addons_folder(),
-                 'image_occlusion_2',
-                 'help',
-                 'Image Occlusion 2.0 - Help page.html')
+#image_occlusion_help_link = "file:///" +\
+#    os.path.join(addons_folder(),
+#                 'image_occlusion_2',
+#                 'help',
+#                 'Image Occlusion 2.0 - Help page.html')
+
+image_occlusion_help_link = "http://tmbb.github.com/ImageOcc2.0/"
 
 svg_edit_dir = os.path.join(addons_folder(),
                              'image_occlusion_2',
@@ -202,8 +205,9 @@ class ImageOcc_Editor(QWidget):
         footer_hbox.addWidget(self.footer_edit)
         
         # Tags
-        self.tags_edit = QLineEdit()
+        self.tags_edit = tagedit.TagEdit(self)
         self.tags_edit.setText(" ".join(tags))
+        self.tags_edit.setCol(mw.col)
         tags_label = QLabel("Tags: ")
 
         tags_hbox = QHBoxLayout()
