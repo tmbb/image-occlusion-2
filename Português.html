@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link href="https://fonts.googleapis.com/css?family=Chivo:900"
+ rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css"
+ href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" type="text/css"
+ href="stylesheets/pygment_trac.css" media="screen">
+  <link rel="stylesheet" type="text/css" href="stylesheets/print.css"
+ media="print">
+<!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  <title>ImageOcc2.0 by tmbb</title>
+</head>
+<body>
+<div style="margin-left: 40px;" id="container">
+<div style="margin-left: 0px; width: 962px;" class="inner"> <header> </header>
+<h1><a class="mozTocH1" name="mozTocId967830"></a>ImageOcc2.0</h1>
+<h2><a class="mozTocH2" name="mozTocId20573"></a>Image Occlusion addon
+for Anki</h2>
+<section id="downloads" class="clearfix"> <a
+ href="https://github.com/tmbb/ImageOcc2.0/zipball/master"
+ id="download-zip" class="button"><span>Download .zip</span></a> <a
+ href="https://github.com/tmbb/ImageOcc2.0/tarball/master"
+ id="download-tar-gz" class="button"><span>Download .tar.gz</span></a> <a
+ href="https://github.com/tmbb/ImageOcc2.0" id="view-on-github"
+ class="button"><span>View on GitHub</span></a> </section>
+<hr><section id="main_content"></section>
+<h1 style="text-align: left;"><a class="mozTocH1" name="mozTocId184221"></a><span
+ style="font-style: italic;">Image Occlusion</span> (Oclusão de Imagem)
+2.0<br>
+</h1>
+<address><span style="font-weight: bold;">Contacto do autor</span> (em
+inglês e português)<span style="font-weight: bold;">:</span>
+tmbb@campus.ul.pt<br>
+<br>
+</address>
+<ul id="mozToc">
+  <li><a href="#mozTocId184221">Image Occlusion (Oclusão de Imagem) 2.0</a>
+    <ul>
+      <li><a href="#mozTocId218624">Introduction</a></li>
+      <li><a href="#mozTocId967720">Utilização básica
+        </a>
+        <ul>
+          <li><a href="#mozTocId709791">Instruções passo a passo</a></li>
+          <li><a href="#mozTocId856452">Significado dos Botões</a>
+            <ul>
+              <li><a href="#mozTocId38927">Sem sobreposição</a></li>
+              <li><a href="#mozTocId237582">Com sobreposição</a></li>
+              <li><a href="#mozTocId915145">Qual utilizar?</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#mozTocId366752">Uso avançado</a>
+        <ul>
+          <li>
+            <ul>
+              <li><a href="#mozTocId202519">Adicionar imagens a partir
+da área de transferência (clipboard)</a></li>
+              <li><a href="#mozTocId344532">Beyond
+Rectangles</a></li>
+              <li><a href="#mozTocId69958">Editar a imagem antes de
+desenhar as formas</a></li>
+              <li><a href="#mozTocId878902">Mais informação</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#mozTocId698449">Mudar as Definições Padrão</a></li>
+      <li><a href="#mozTocId27759">Ajuda</a></li>
+      <li><a href="#mozTocId396176">Planos para o futuro</a></li>
+      <li><a href="#mozTocId677801">FAQ (preguntas frequentes):</a></li>
+    </ul>
+  </li>
+</ul>
+<h2 style="text-align: left;"><a class="mozTocH2" name="mozTocId218624"></a>Introduction</h2>
+<div style="text-align: left;">Este addon permite acrescentar cartas de
+oclusão de imagem à colecção do Anki. Cartas de oclusão de imagens não
+são mais do que <span style="font-style: italic;">cloze deletions</span>
+ou preenchimento de espaços, mas com imagens<br>
+Geralmente o utilizador esconde partes de uma imagem, e durante as
+repetições tem de identificar a parte escondida.<br>
+A técnica de occlusão de imagens é discutida no site do supermemo (<a
+ href="http://www.supermemo.com/articles/flow.htm#Occlusion%20test">www.supermemo.com/articles/flow.htm#Occlusion
+test</a>, em inglês).<br>
+<br>
+Na prática, o utilizador escolhe geralmente uma imagem com legendas, e
+esconde as legendas que quer identificar durante as repetições. Como
+uma imagem vale 1000 palavras (e esta é apenas uma das 38 cardas
+criadas de uma só vez apartir da imagem original):<br>
+<br>
+</div>
+<table style="text-align: left; width: 1120px; height: 60px;" border="1"
+ cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; width: 467px;" rowspan="1"
+ colspan="1"><span style="font-weight: bold;">Pergunta:</span><br>
+      </td>
+      <td style="vertical-align: top; width: 481px;"><span
+ style="font-weight: bold;">Resposta:</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="1" rowspan="1"
+ style="vertical-align: top; width: 467px;"><img
+ style="width: 556px; height: 473px;"
+ src="images/thigh_muscles_non_overlapping_question.png" alt=""> <br>
+      </td>
+      <td style="vertical-align: top; width: 481px;"><img
+ style="width: 556px; height: 473px;"
+ src="images/thigh_muscles_non_overlapping_answer.png" alt=""> </td>
+    </tr>
+  </tbody>
+</table>
+<div style="text-align: left;"><br>
+</div>
+<h2 style="text-align: left;"><a class="mozTocH2" name="mozTocId967720"></a>Utilização
+básica<br>
+</h2>
+<div style="text-align: left;">O addon é muito simples. No editor de
+notas (<span style="font-style: italic;">note editor</span>), apareceu
+um novo botão contendo o texto Image Occlusion (na fotografia abaixo
+ignorem o panda, o relâmpago e os flocos de neve; estes são de alguns
+dos meus outros addons; para saber mais sobre eles: <a
+ href="http://beta.ankiweb.net/shared/info/45911888">panda</a>, <a
+ href="http://beta.ankiweb.net/shared/info/491274358">relâmpago</a>,
+<a href="http://beta.ankiweb.net/shared/info/2819760111">flocos de neve</a>).<br>
+<br>
+<img style="width: 726px; height: 454px;" alt=""
+ src="images/new_button.png"><br>
+<br>
+Para adocionar novas cartas do tipo Oclusão de Imagem à colecção,
+clique nesse botão. Vai aparecer uma janela a pedir para escolher um
+ficheiro de imagem para servir de base às cartas. Escolha o ficheiro, e
+uma nova janela vai aparecer, com um editor de imagem contendo a imagem
+pronta para ser editada.<br>
+<br>
+As cartas são criadas desenhando formas sobre a imagem original. Há
+várias formas que se pode sesenhar, e as formas podem ser agrupadas de
+modo a cobrir partes não contíguas da imagem. Na grande maioria dos
+casos é mais conveniente utilizar rectângulos. Vamos ver como tudo se
+processa desde o início. <br>
+<br>
+<h3><a class="mozTocH3" name="mozTocId709791"></a>Instruções passo a
+passo<br>
+</h3>
+</div>
+<h4><a class="mozTocH2" name="mozTocId933979"></a>1<br>
+</h4>
+<div style="text-align: left;"><span
+ style="background-color: rgb(255, 204, 51);"></span>Abra o editor de
+notas (note editor), clicando no botão <span style="font-weight: bold;">Add</span>
+do browser de decks, por exemplo.<br>
+<br>
+<img style="width: 726px; height: 454px;" src="images/new_button.png"
+ alt=""> <br>
+<br>
+</div>
+<h4><a class="mozTocH2" name="mozTocId601707"></a>2</h4>
+<div style="text-align: left;">Clique no botão<span
+ style="font-style: italic;"> Image Occlusion</span>.<br>
+<br>
+</div>
+<h4><a class="mozTocH2" name="mozTocId235857"></a>3<br>
+</h4>
+<div style="text-align: left;"><span
+ style="background-color: rgb(255, 204, 51);"></span>Escolha a imagem
+que quer utilizar. Eu escolhi uma umagem do <a
+ href="http://www.amazon.com/Atlas-Human-Anatomy-Student-Consult/dp/1416059512">atlas
+do Netter</a>, que retrata uma disecção profunda dos músculos da coxa).<br>
+Também é possível <a
+ href="http://www.amazon.com/Atlas-Human-Anatomy-Student-Consult/dp/1416059512">utilizar
+uma imagem da área de transferência (<span style="font-style: italic;">clipboard</span>)</a>.<br>
+<br>
+</div>
+<h4><a class="mozTocH2" name="mozTocId643305"></a>4<br>
+</h4>
+<div style="text-align: left;">Um editor de imagens irá aparecer.<br>
+<br>
+Para além de mostrar a área de edição de imagem, a versõ actual permite
+escolher (opcionalmente):<br>
+<ol>
+  <li><span style="font-weight: bold;">Cabeçalho (</span><span
+ style="font-style: italic; font-weight: bold;">Header</span><span
+ style="font-weight: bold;">)</span>: aparece acima da imagem durante
+as repetições</li>
+  <li><span style="font-weight: bold;">Rodapé (</span><span
+ style="font-style: italic; font-weight: bold;">Footer</span><span
+ style="font-weight: bold;">)</span>: aparece abaixo da imagem durante
+as repetições</li>
+  <li><span style="font-style: italic; font-weight: bold;">Tags</span><span
+ style="font-weight: bold;">:</span> são adicionados às notas criadas.
+Esta é a maneira de adicionar <span style="font-style: italic;">tags</span>
+às cartas de Oclusão de imagem. Mudar os tags no editor de notas não
+afecta os <span style="font-style: italic;">tags</span> das cartas de
+Oclusão de Imagem</li>
+</ol>
+Também é possível escolher o <span
+ style="font-weight: bold; font-style: italic;">deck</span> ao qual as
+cartas vão ser
+adicionadas, clicando no botão mais abaixo. Este butão funciona tal e
+qual o&nbsp; diálogo <span style="font-style: italic;">Choose Deck</span>
+no editor de notas do anki.<br>
+<br>
+As imagens que incluídas neste documento ainda não mostram estas
+possibilidades, uma vez que foram retiradas da documentação da versão
+anterior. Ainda não foram actualizadas por falta de tempo.<br>
+<br>
+<img style="width: 816px; height: 677px;" src="images/editor.png" alt="">
+<br>
+<br>
+</div>
+<h4><a class="mozTocH2" name="mozTocId690810"></a>5<br>
+</h4>
+<div style="text-align: left;"><span
+ style="background-color: rgb(255, 204, 51);"></span>Pode agora começar
+a desenhar rectângulos sobre as legendas que quer esconder.<br>
+<br>
+<img style="width: 837px; height: 728px;"
+ src="images/editor_muscles_of_thigh_first_mask.png" alt=""><br>
+<br>
+</div>
+<h4><a class="mozTocH2" name="mozTocId694884"></a>6<br>
+</h4>
+<div style="text-align: left;"><span
+ style="background-color: rgb(255, 204, 51);"></span>A ferramenta
+inicial no editor é a ferramenta rectângulo, e portanto é possível
+começar a desenhar rectângulos (o caso mais comum) assim que a imagem
+aparece. Os rectângulos são inicialmente brancos, mas a cor pode ser
+mudada no painel de coros no fundo do ecrã.<br>
+<br>
+Na seguinte imagem, a ferramenta rectângulo está marcada com uma seta:<br>
+</div>
+<div style="text-align: left;"><br>
+</div>
+<div style="text-align: left;"><img style="width: 816px; height: 677px;"
+ src="images/new_button_marked.png" alt=""><br>
+<br>
+</div>
+<h4><a class="mozTocH2" name="mozTocId562663"></a>7</h4>
+<div style="text-align: left; width: 967px;"><span
+ style="background-color: rgb(255, 204, 51);"></span>Repita para todas
+as legendas.<br>
+<br>
+<img style="width: 837px; height: 728px;"
+ src="images/editor_muscles_of_thigh_all_masks.png" alt=""></div>
+<div style="text-align: left;">
+<h4><a class="mozTocH2" name="mozTocId599932"></a>8<br>
+</h4>
+<div style="text-align: left;"><span
+ style="background-color: rgb(255, 204, 51);"></span>Agora que todas as
+legendas estão escondidas, falta adicionar as cartas à colecção.<br>
+Para adicionar as cartas, clique num dos botões assinalados na figura
+(o significado de cada um dos botões é disutido mais abaixo):<br>
+<br>
+<img style="width: 816px; height: 677px;"
+ src="images/editor_buttons_marked.png" alt=""> <br>
+<h4><a class="mozTocH2" name="mozTocId905344"></a>9</h4>
+<span style="background-color: rgb(255, 204, 51);"></span>Uma caixa
+amarela (tooltip) irá aparecer indicanto quantas notas (ou cartas,
+visto que cada nota dá uma carta) foram adicionadas.<br>
+Se forem adicionadas muitas notas ao mesmo tempo, pode ser necessário
+esperar algum tempo.<br>
+<span style="background-color: rgb(255, 204, 51);"></span>Parabéns:
+adicionou o seu primeiro conjunto de cartas de Oclusão de Imagem<br>
+<br>
+<h4><a class="mozTocH2" name="mozTocId597728"></a>10</h4>
+<span style="font-weight: bold; background-color: rgb(255, 204, 51);"></span><span
+ style="font-weight: bold;">Não feche a janela do editor de imagens!</span><span
+ style="background-color: rgb(255, 204, 0);"></span> Um bug no kit
+gráfico Qt (utilizado pelo Anki) faz com que se o editor for fechado
+seja necessário reiniciar o Anki para adicionar mais cartas de Oclusão
+de Imagem. Enquanto a janela do editor for deixada aberta é possível
+adicionar cartas de Oclusão de Imagem a partir de qualquer número de
+imagens.<br>
+<br>
+É apenas necessário recomeçar a partir do <span
+ style="font-weight: bold;">passo 1</span> (clique no botão de Oclusão
+de Imagem do editor e recomece a partir daí)<br>
+</div>
+</div>
+<h3 style="text-align: left;"><a class="mozTocH3" name="mozTocId856452"></a>Significado
+dos Botões<br>
+</h3>
+<div style="text-align: left;">Há dois botões:<br>
+<br>
+</div>
+<table
+ style="text-align: left; height: 81px; margin-right: auto; margin-left: 20px; width: 930px;"
+ border="1" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; width: 159px; text-align: left;">1.
+Sem sobreposição<br>
+(<span style="font-style: italic;">non-overlapping</span>)<br>
+      </td>
+      <td style="vertical-align: top; width: 64px; text-align: left;"><img
+ style="width: 32px; height: 33px;" alt="Non-overlapping"
+ src="images/button_non_overlapping.png"></td>
+      <td style="vertical-align: top; width: 665px; text-align: left;">&nbsp;(<span
+ style="text-decoration: underline;">Mnemónica</span>: note-se que as
+duas formas não se sobrepõem)</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 159px; text-align: left;">2.
+Com sobreposição<br>
+(<span style="font-style: italic;">overlapping</span>)<br>
+      </td>
+      <td style="vertical-align: top; width: 64px; text-align: left;"><img
+ style="width: 31px; height: 32px;" src="images/button_overlapping.png"
+ alt=""></td>
+      <td style="vertical-align: top; width: 665px; text-align: left;">(<span
+ style="text-decoration: underline;">Mnemónica</span>: note-se que as
+duas formas se sobrepõem)</td>
+    </tr>
+  </tbody>
+</table>
+<h4 style="text-align: left;"><a class="mozTocH4" name="mozTocId38927"></a>Sem
+sobreposição<br>
+</h4>
+<div style="text-align: left;">Este botão é chamado com sobreposição
+porque cria cartas na qual não há sobreposição de informação.<br>
+Isto porque o lado das perguntas das cartas esconde todas as legendas,
+mostrando a legenda que o utilizador tem de identificar com uma cor
+diferente, e a resposta mostra apenas essa legenda (e nenhuma das
+outras). Isto é o mesmo que mostrar uma frase com cloze deletion com
+todas as partes escondidas e perguntar apenas por uma delas.<br>
+Por exemplo:<br>
+<br>
+</div>
+<table style="text-align: left; width: 1120px;" border="1"
+ cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td colspan="1" rowspan="1"
+ style="vertical-align: top; font-weight: bold; width: 486px;">Pergunta:<br>
+      </td>
+      <td style="vertical-align: top; width: 472px;"><span
+ style="font-weight: bold;">Resposta:</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="1" rowspan="1"
+ style="vertical-align: top; width: 486px;"><img
+ style="width: 556px; height: 473px;"
+ src="images/thigh_muscles_non_overlapping_question.png" alt=""> <br>
+      </td>
+      <td style="vertical-align: top; width: 472px;"><img
+ style="width: 556px; height: 473px;"
+ src="images/thigh_muscles_non_overlapping_answer.png" alt=""> </td>
+    </tr>
+  </tbody>
+</table>
+<h4 style="text-align: left;"><a class="mozTocH4" name="mozTocId237582"></a>Com
+sobreposição<br>
+</h4>
+<div style="text-align: left;"><span
+ style="background-color: rgb(255, 204, 0);"></span>Este botão é
+chamado com sobreposição porque cria cartas nas quais há sobreposição
+de informação. Isto porque o lado das perguntas das cartas mostra todas
+as legendas escondendo apenas aquela que o utilizador tem de
+identificar, e a resposta mostra todas as legendas. Isto é o mesmo que
+mostrar uma frase com "cloze deletion" com apenas uma parte escondida
+para o utilizador identificar.<br>
+Por exemplo (compare-se com as imagens anteriores)<br>
+</div>
+<table style="text-align: left; width: 1120px;" border="1"
+ cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; width: 479px;"><span
+ style="font-weight: bold;">Pergunta:</span><br>
+      </td>
+      <td colspan="1" rowspan="1"
+ style="vertical-align: top; width: 479px;"><span
+ style="font-weight: bold;">Resposta:</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 479px;"><img
+ style="width: 556px; height: 473px;"
+ src="images/thigh_muscles_overlapping_question.png" alt=""></td>
+      <td colspan="1" style="vertical-align: top; width: 479px;"><img
+ style="width: 556px; height: 473px;"
+ src="images/thigh_muscles_overlapping_answer.png" alt=""></td>
+    </tr>
+  </tbody>
+</table>
+<div style="text-align: left;"><br>
+</div>
+<h4 style="text-align: left;"><a class="mozTocH4" name="mozTocId915145"></a>Qual
+utilizar?</h4>
+<div style="text-align: left;"><span
+ style="background-color: rgb(255, 204, 0);"></span>Isso depende do
+material que se está a adicionar, bem como das preferências pessoais de
+cada um. Eu acredito que para imagens que consistem num desenho com
+algumas legendas que apontam para partes da imagem, Oclusção de Imagem
+sem sobreposição é melhor, porque impede o estudante de utilizar pistas
+fornecidas pelo contexto para adivinhar uma resposta á qual não saberia
+responder de outra maneira. Um utilizador que possa ver todas as
+legendas excepto uma pode facilmente identificar a que falta. Apesar
+desta conjectura, não tenho dados que mostrem a superioridade de nenhum
+dos métodos nesta situação.<span
+ style="background-color: rgb(255, 204, 0);"></span><br>
+<br>
+Por outro lado, em imagens em que o contexto é crucial, como um
+diagrama represntando um ciclo de bioquímica (por exemplo, o ciclo de
+Krebs), no qual os compostos vêm uns a seguir aos outros, tem de se
+utilizar Oclusão de Imagens com sobreposição. Não dá para se adivinhar
+que uma legenda está a esconder o composto B a não ser que se consiga
+perceber através do contexto que é criado a partir de A e origina C.<br>
+<br>
+Aqui está um exemplo de uma carta de Oclusão de Imagem criada a partir
+de um diagrama do <a href="http://pt.wikipedia.org/wiki/Ciclo_de_Krebs">ciclo
+de Krebs</a>:<br>
+<br>
+</div>
+<table style="text-align: left; width: 890px;" border="1"
+ cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Pergunta:</span><br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Resposta:</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><img
+ style="width: 424px; height: 376px;"
+ src="images/krebs_fumaric_question.png" alt=""></td>
+      <td style="vertical-align: top;"><img
+ style="width: 424px; height: 376px;" src="images/krebs_answer.png"
+ alt=""></td>
+    </tr>
+  </tbody>
+</table>
+<div style="text-align: left;">With non-overlapping image occlusion you
+would have to memorize the
+place of fumaric acid in this specific drawing of the cycle. With
+overlapping image occlusion, you have only to memorize which compound
+comes from <span style="font-style: italic;">succinic acid</span> and
+turns into <span style="font-style: italic;">malic acid</span>, which
+is exactly our goal.<br>
+<br>
+Se se tivesse usado Oclusão de Imagem sem sobreposição seria necessário
+memorizar o lugar de ácido fumérico neste desenho específico do ciclo.
+Com sobreposição de imagem, apenas é necessário memorizar que composto
+é formado (por exemplo) a partir de succinato e origina malato, qiue é
+exactamente o nosso objectivo.<br>
+<br>
+</div>
+<h2 style="text-align: left;"><a class="mozTocH2" name="mozTocId366752"></a>Uso
+avançado<br>
+</h2>
+<h4 style="text-align: left;"><a class="mozTocH4" name="mozTocId202519"></a><span
+ style="font-weight: bold;"><a name="clipboard"></a>Adicionar imagens a
+partir da área de transferência (<span style="font-style: italic;">clipboard</span>)<br>
+</span></h4>
+<div style="text-align: left;">Se se tiver uma imagem na área de
+transferência, como por exemplo uma captura de ecrã (<span
+ style="font-style: italic;">screenshot</span>), quando se clica no
+botão Oclusão de Imagem, o addon não vai perguntar por um nome de
+ficheiro e vai utilizar directamente a imagem na área de transferência.
+A imagem vai ser eliminada da área de transferência imediatamente após
+aparecer no editor de imagem. Se remover a imagem da área de
+transferência é inconveniente, por favor informem o autor por email e
+poder-se-á tornar essa opção configurável.<br>
+<br>
+</div>
+<h4 style="text-align: left;"><a class="mozTocH4" name="mozTocId344532"></a>Beyond
+Rectangles</h4>
+<div style="text-align: left;">Apesar da discussão anterior utilizar
+rectângulos como exemplo, é possível utilizar qualquer tipo de formas,
+ou mesmo um grupo de formas para esconder partes da imagem. Utilizar um
+gupo de formas pode ser útil para quem quiser esconder partes não
+contíguas da imagem.<br>
+<a
+ href="http://ehmdunque.altervista.org/i-informatica/manuali/Short_intro_SVG-edit.html">Este
+link</a> (em inglês) tem um guia de instruções para o editor de imagem,
+que inclui instruções sobre como agrupar/desgrupar objectos.<br>
+Aqui está um exemplo de utilização de um grupo de dois rectângulos para
+esconder dois compostos químicos diferentes no ciclo de Krebs:<br>
+<br>
+</div>
+<table style="text-align: left; width: 890px;" border="1"
+ cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top; width: 442px;"><span
+ style="font-weight: bold;">Question:</span><br>
+      </td>
+      <td style="vertical-align: top; width: 444px;"><span
+ style="font-weight: bold;">Answer:</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 442px;"><img
+ style="width: 424px; height: 376px;" src="images/krebs_NAD.png" alt=""></td>
+      <td style="vertical-align: top; width: 444px;"><img
+ style="width: 424px; height: 376px;" src="images/krebs_answer.png"
+ alt=""></td>
+    </tr>
+  </tbody>
+</table>
+<div style="text-align: left;"><br
+ style="background-color: rgb(255, 204, 0);">
+<span style="background-color: rgb(255, 204, 0);"></span>Porque é que
+se escolheu esconder os dois compostos ao mesmo tempo? Bem , qualquer
+pessoa que saiba alguma bioquímica sabe que quando se vê NAD+ unm lado
+de uma equação químcia, NADH vai aparecer do outro lado (nem sempre,
+mas com uma frequência enorme no metabolismo humano). Se um destes
+compostos é mostrado na imagem, identificar o outro não requer
+conhecimento nenhum da reacção químicas específica que se está a
+estudar. Ora, o objectivo é testar o conhecimento do ciclo de Krebs, e
+não ver se o utilizador sabe ou não uma regra básica da bioquímica, e
+por esta razão esconde-se os dois compostos ao mesmo tempo. Como estes
+compostros estão rão associados por esta altura (para compreender o
+ciclo de Krebs é necessário <a
+ href="http://www.supermemo.com/articles/20rules.htm#Build%20upon%20the%20basics">saber
+o básico</a>, nomeadamente o que são o NAD+ e o NADH), o par funciona
+como um <a
+ href="http://en.wikipedia.org/wiki/Chunking_%28psychology%29">chunk</a>,
+e não estamos a contradizer o <a
+ href="http://www.supermemo.com/articles/20rules.htm#minimum%20information%20principle">princípio
+da informação mínima</a>.<br>
+<br>
+</div>
+<h4 style="text-align: left;"><a class="mozTocH4" name="mozTocId69958"></a>Editar
+a imagem antes de desenhar as formas<br>
+</h4>
+<div style="text-align: left;">É possível editar a imagem antes de
+desenhar as formas. O editor contém um painel denominado <span
+ style="font-style: italic;">Layers</span> (camadas). Se se clicar na
+palavra <span style="font-style: italic;">Layers</span>, o painel vai
+aparecer. Normalmente, a camada <span style="font-style: italic;">Shapes</span>
+(formas) está activa, o que quer dizer que qualquer coisa que se
+desenhe é interpretada como sendo uma forma destinada a esconder parte
+da imagem.<br>
+<br>
+<img style="width: 816px; height: 550px;" alt=""
+ src="images/layers_shapes_active.png"><br>
+<br>
+</div>
+<h4 style="text-align: left;"><a class="mozTocH4" name="mozTocId878902"></a>Mais
+informação<br>
+</h4>
+<div style="text-align: left;">Para saber mais sobre o editor de
+imagem, ver o <a href="http://code.google.com/p/svg-edit/">site oficial</a>
+(em inglês).<br>
+<br>
+</div>
+<h2 style="text-align: left;"><a class="mozTocH2" name="mozTocId698449"></a>Mudar
+as Definições Padrão<br>
+</h2>
+<div style="text-align: left;">Na versão actual, é possível mudar:<br>
+</div>
+<ol>
+  <li>a cor inicial dos rectângulos [o valor padrão é <span
+ style="font-weight: bold;">branco</span>]. Independentemente da cor
+inicial, é possível mudar a cor dos rectângulos no editor de imagem.<br>
+  </li>
+  <li>A cor do rectângulo que aparece na pergunta [valor padrão é <span
+ style="font-weight: bold; color: red;">vermelho</span>, como mostram
+os exemplos]. Esta opção não pode ser miudade no editor de imagem<br>
+  </li>
+</ol>
+<div style="text-align: left;">Para mudar estas definições, aceda ao
+menu <span style="font-style: italic;">Tools &gt; Image Occlusion 2.0
+(options)</span>, como indicado na figura:<br>
+<br>
+<img style="width: 746px; height: 368px;" src="images/tool_options.png"
+ alt=""><br>
+<br>
+A janela seguinte irá aparecer:<br>
+<br>
+<img style="width: 193px; height: 122px;"
+ src="images/options_window.png" alt=""><br>
+<br>
+Clique no botão <span style="font-style: italic;">Choose Color</span>
+e será apresentada uma palete de cores de onde se é possível escolher
+uma cor.<br>
+</div>
+<h2 style="text-align: left;"><a class="mozTocH2" name="mozTocId27759"></a>Ajuda</h2>
+<div style="text-align: left;"><span
+ style="background-color: rgb(255, 204, 0);"></span>É possível aceder a
+esta documentação no menu de ajuda da janela principal do Anki.<br>
+<br>
+<img style="width: 747px; height: 366px;" src="images/help.png" alt=""><br>
+<br>
+<br>
+</div>
+<h2 style="text-align: left;"><a class="mozTocH2" name="mozTocId396176"></a>Planos
+para o futuro<br>
+</h2>
+<div style="text-align: left;">O problema mais importante que precisa
+de ser resolvido é o <a href="#big_bug">bug principal</a>, descrito na
+FAQ, mas de momento não há nada fácil que se possa fazer. Aceitam-se
+sugestões.<br>
+<br>
+</div>
+<h2 style="text-align: left;"><a class="mozTocH2" name="mozTocId677801"></a>FAQ
+(preguntas frequentes):</h2>
+<div style="text-align: left;"><span style="font-weight: bold;"></span><span
+ style="font-weight: bold;">Que editor de imagm é este?</span> é o
+svg-edit, um editor escito em javascript e HTML que pode ser
+descarregado no <a href="http://code.google.com/p/svg-edit/">site
+oficial</a>. Nenhum do código principal fou tocado, e apenas foi
+escrita uma extensão.<span style="font-weight: bold;"></span><br>
+<br>
+<span style="font-weight: bold;">Onde é que posso saber mais acerca do
+editor?</span> pode consultar o <a
+ href="http://code.google.com/p/svg-edit/">site oficial</a>. Contém
+imensa documentação e pode dar ideias sobre como utilizar todas as
+potencialidades do svg-edit para criar cartas de Oclusão de Imagem. No
+entanto, na minha opinião nada bate o velho rectângulo ou grupos de
+rectângulos. Este <a
+ href="http://ehmdunque.altervista.org/i-informatica/manuali/Short_intro_SVG-edit.html">guia</a>
+(em inglês) também pode ser útil.<br>
+<span style="font-weight: bold;"></span><br>
+<span style="font-weight: bold;"><a name="big_bug"></a>Sometimes, the
+editor refuses to
+appear correctly. Why?</span>
+This is probably due to a bug in <a
+ href="http://qt-project.org/doc/qt-4.7/">Qt</a>
+(the graphical user interface
+library used by Anki), more specifically in the WebKit engine. In my
+system (Windows 7), the editor is always
+displayed correctly the first time it is used, but if I try to use it
+again without restarting Anki, it fails to appear correctly. If I
+restart Anki, the editor works again. In your system it may be
+different. To avoid this situation, please keep the image editor window
+open until you shut down Anki. This way, you should be able to add
+Image Occlusion cards from as many images as you want. This is not an
+ideal situation, and it might be fixed in a new addon version.<br>
+<br>
+<span style="font-weight: bold;">Posso adicionar imagens a partir da
+áre de transferência (<span style="font-style: italic;">clipboard</span>)
+?</span> <a href="#clipboard">Sim!</a><span style="font-weight: bold;"></span><br>
+<br>
+<span style="font-weight: bold;">Porque é que este addon se chama </span><span
+ style="font-style: italic; font-weight: bold;">Image Occlusion 2.0</span><span
+ style="font-weight: bold;">? Há algum addon chamado Image </span><span
+ style="font-style: italic; font-weight: bold;">Occlusion 1.0</span><span
+ style="font-weight: bold;">?</span> Há algum tempo eu escrevi um <a
+ href="http://beta.ankiweb.net/shared/info/2189266752">outro addon</a>
+chamado <span style="font-style: italic;">Image Occlusion</span>. Eu
+considero o presente addon como um sucessor do <span
+ style="font-style: italic;">Image Occlusion</span>, porque está muito
+melhor integrado com o Anki, é muito mais fácil de instalar e é mais
+fácil de personalizar. No entanto, por causa do <a href="#big_bug">bug</a>
+discutido nauma das questões anteriores, não posso simplesmente remover
+o addon anterior e substituí-lo por este. Foi por isso que decidi
+dar-lhe um novo nome e manter os dois simultaneamente. Dito isto, o meu
+otro addon também está cheio de bugs em algumas plataformas e
+normalmente não funciona na maioria do sistemas Linux (provavelmente
+devido a um problema do Inkscape), e portanto aqueles que não conseguem
+por a funcionar o <span style="font-style: italic;">Image Occlusion</span>
+correctamente,podem querer tentar o <span style="font-style: italic;">Image
+Occlusion 2.0</span>.<br>
+<br>
+<span style="font-weight: bold;">Tenho outra questão!</span> O autor
+pode ser contactado (em ingês e em português) pelo seguinte email: <span
+ style="font-style: italic;">tmbb@campus.ul.pt</span></div>
+<footer>ImageOcc2.0 is maintained by <a href="https://github.com/tmbb">tmbb</a><br>
+This page was generated by <a href="http://pages.github.com">GitHub
+Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason
+Long</a>. </footer> </div>
+</div>
+</body>
+</html>
