@@ -67,9 +67,9 @@ def add_notes_non_overlapping(svg, q_color, tags, fname_original,
         f.write(etree.tostring(svg_i))
         f.close()
     
-    add_notes.gui_add_QA_notes(fnames_q_svg, fnames_a_svg,
-                               media_dir, tags, svg_fname, fname_original,
-                               header, footer, did)
+    add_notes.gui_add_QA_note(fnames_q_svg, fnames_a_svg,
+                              media_dir, tags, svg_fname, fname_original,
+                              header, footer, did)
     
     return media_dir
 
@@ -126,8 +126,8 @@ def add_notes_overlapping(svg, q_color, tags, fname_original,
     f.close()
     
     # add notes, updating the GUI:
-    add_notes.gui_add_QA_notes(fnames_q_svg, [fname_a_svg]*nr_of_cards,
-                               media_dir, tags, svg_fname, fname_original,
-                               header, footer, did)
+    add_notes.gui_add_QA_note(fnames_q_svg, [fname_a_svg]*nr_of_cards,
+                              media_dir, tags, svg_fname, fname_original,
+                              header, footer, did)
     
     return media_dir

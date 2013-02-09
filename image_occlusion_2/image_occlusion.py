@@ -23,17 +23,11 @@ import svgutils
 import notes_from_svg
 
 
-#image_occlusion_help_link = "file:///" +\
-#    os.path.join(addons_folder(),
-#                 'image_occlusion_2',
-#                 'help',
-#                 'Image Occlusion 2.0 - Help page.html')
-
 image_occlusion_help_link = "http://tmbb.github.com/ImageOcc2.0/"
 
 svg_edit_dir = os.path.join(addons_folder(),
-                             'image_occlusion_2',
-                             'svg-edit-2.5.1')
+                            'image_occlusion_2',
+                            'svg-edit-2.5.1')
 
 ext_image_occlusion_js_path = os.path.join(svg_edit_dir,
                                            'extensions',

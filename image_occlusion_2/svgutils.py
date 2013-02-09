@@ -17,33 +17,6 @@ def addons_folder(): return mw.pm.addonFolder()
 
 blank_svg_path = os.path.join(addons_folder(), "image_occlusion_2", "blank-svg.svg")
 
-#### State source!!!!
-#def rasterize_svg(svg_path, png_path):
-#    # We must convert to unix path for use in QImage.save()
-#    unix_png_path = png_path.replace('\\', '/')
-    
-#    svg_url = QtCore.QUrl.fromLocalFile(svg_path)
-#    #QtGui.QMessageBox.information(None, "Info", svg_url.toString())
-    
-#    webpage = QtWebKit.QWebPage()
-    
-#    def onLoadFinished(result):
-#        # Set the size of the (virtual) browser window
-#        webpage.setViewportSize(webpage.mainFrame().contentsSize())
-#        # Paint this frame into an image
-#        image = QtGui.QImage(webpage.viewportSize(),
-#                             QtGui.QImage.Format_ARGB32)
-#        painter = QtGui.QPainter(image)
-#        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-#        painter.setRenderHint(QtGui.QPainter.TextAntialiasing)
-#        painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
-#        webpage.mainFrame().render(painter)
-#        painter.end()
-#        image.save(unix_png_path)
-        
-#    webpage.connect(webpage, QtCore.SIGNAL("loadFinished(bool)"), onLoadFinished)
-#    webpage.mainFrame().load(svg_url)
-
 def strip_attributes(root, attrs):
     for elt in root.iter():
         for attr in attrs:

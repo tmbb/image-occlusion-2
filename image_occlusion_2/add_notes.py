@@ -1,6 +1,7 @@
 import etree.ElementTree as etree
 
 from anki import notes, consts
+from anki.consts import MODEL_CLOZE
 from aqt import mw, utils
 
 import os
@@ -14,9 +15,9 @@ from PyQt4 import QtGui
 
 def notes_added_message(nrOfNotes):
     if nrOfNotes == 1:
-        msg = "<b>1 note</b> was added to your collection"
+        msg = "<b>1 note</b> and <b>1 card</b> were added to your collection"
     else:
-        msg = "<b>{0} notes</b> were added to your collection".format(nrOfNotes)
+        msg = "<b>1 note</b> and <b>%s cards</b> were added to your collection" % nrOfNotes
     return msg
 
 
@@ -27,81 +28,112 @@ def rm_media_dir(media_dir):
     try: os.rmdir(media_dir)
     except: pass
 
-IMAGE_QA_MODEL_NAME = "Image Q/A - 2.0"
-QUESTION_FIELD_NAME = "Question"
-ANSWER_FIELD_NAME = "Answer"
+IMAGE_QA_MODEL_NAME = "Image Q/A - 2.1"
+IMAGES_FIELD_NAME = "Images"
 SVG_FIELD_NAME = "SVG"
 ORIGINAL_IMAGE_FIELD_NAME = "Original Image"
 HEADER_FIELD_NAME = "Header"
 FOOTER_FIELD_NAME = "Footer"
 
-HEADER_FIELD_IDX = 4 # index starts at zero
+HEADER_FIELD_IDX = 3 # index starts at zero
 
-ImageQA_qfmt = """
-{{#%(src_img)s}}
-{{%(header)s}}
-<div style="position:relative; width:100%%">
-  <div style="position:absolute; top:0; width:100%%">
-    {{%(src_img)s}}
-  </div>
-  <div style="position:absolute; top:0; width:100%%">
-    {{%(que)s}}<br/>
-    {{%(footer)s}}
-  </div>
-</div>
-{{%(footer)s}}
-<span style="display:none">{{%(svg)s}}</span>
-{{/%(src_img)s}}
+css = """\
+.card {
+  font-family: arial;
+  font-size: 20px;
+  text-align: center;
+  color: black;
+  background-color: white;
+}
 
-{{^%(src_img)s}}
-{{%(que)s}}
-<span style="display:none">{{%(svg)s}}</span>
-{{/%(src_img)s}}
-""" % \
- {'que': QUESTION_FIELD_NAME,
-  'svg': SVG_FIELD_NAME,
-  'src_img': ORIGINAL_IMAGE_FIELD_NAME,
-  'header': HEADER_FIELD_NAME,
-  'footer': FOOTER_FIELD_NAME}
+.cloze {}
 
-ImageQA_afmt = """
-{{#%(src_img)s}}
-{{%(header)s}}
-<div style="position:relative; width:100%%">
-  <div style="position:absolute; top:0; width:100%%">
-    {{%(src_img)s}}
-  </div>
-  <div style="position:absolute; top:0; width:100%%">
-    {{%(ans)s}}<br/>
-    {{%(footer)s}}
-  </div>
-</div>
-<span style="display:none">{{%(svg)s}}</span>
-{{/%(src_img)s}}
+.cloak {
+  line-height: 0; 
+  font-size: 0px;
+  color: transparent;
+  letter-spacing: -1;
+}
 
-{{^%(src_img)s}}
-{{%(ans)s}}
-<span style="display:none">{{%(svg)s}}</span>
-{{/%(src_img)s}}
-""" % \
- {'ans': ANSWER_FIELD_NAME,
-  'svg': SVG_FIELD_NAME,
-  'src_img': ORIGINAL_IMAGE_FIELD_NAME,
-  'header': HEADER_FIELD_NAME,
-  'footer': FOOTER_FIELD_NAME}
+.cloak > .wizard {
+  display: none;
+}
+
+.cloak > .cloze > .wizard {
+ font-family: arial;
+ font-size: 20px;
+ text-align: center;
+ color: black;
+ background-color: white;
+}
+"""
+
+WIZARD = """\
+<span class="wizard">%s
+  <div style="position:relative; width:100%%">
+    <div style="position:absolute; top:0; width:100%%">%s</div>
+    <div style="position:absolute; top:0; width:100%%">%s%s</div>
+  </div>
+</span>
+""".replace('\n', '') # anki doesn't deal well with newlines inside clozes
+
+### Templates for question and answer
+## ImageQA_qfmt == ImageQA_afmt
+ImageQA_qfmt = """\
+<span class="cloak">
+{{cloze:Images}}
+</span>
+<span style="display:none">{{%s}}</span>
+""" % SVG_FIELD_NAME
+
+ImageQA_afmt = """\
+<span class="cloak">
+{{cloze:Images}}
+</span>
+"""
+
+
+def cloze(i, q, a):
+    return "{{c%s::[%s]::%s}}" % ((i+1), a, q)
+
+def wizard(svg, bitmap, header, footer):
+    if header: _header = header + "<br/>"
+    else: _header = ""
+    
+    if footer: _footer = "<br/><br/><br/>" + footer
+    else: _footer = ""
+    
+    return WIZARD % (header, bitmap, svg, _footer)
+
+def cloak(s):
+    return '<span class="cloak">%s</span>' % s
+
+def make_images_field(svgs_q, svgs_a, bitmap, header, footer):
+    clozes = [cloze(i,
+                    wizard(svgs_q[i], bitmap, header, footer),
+                    wizard(svgs_a[i], bitmap, header, footer))
+              for i in xrange(len(svgs_q))]
+    return "\n".join(clozes)
 
 def add_image_QA_model(col):
     mm = col.models
     m = mm.new(IMAGE_QA_MODEL_NAME)
-    # Add fields:
-    question_field = mm.newField(QUESTION_FIELD_NAME)
-    mm.addField(m, question_field)
-    answer_field = mm.newField(ANSWER_FIELD_NAME)
-    mm.addField(m, answer_field)
+    m['type'] = MODEL_CLOZE
+    m['css'] = css
+    # Define the new Fields
+    images_field = mm.newField(IMAGES_FIELD_NAME)
     svg_field = mm.newField(SVG_FIELD_NAME)
-    mm.addField(m, svg_field)
     original_image_field = mm.newField(ORIGINAL_IMAGE_FIELD_NAME)
+    header_field = mm.newField(HEADER_FIELD_NAME)
+    footer_field = mm.newField(FOOTER_FIELD_NAME)
+    # Add fields:
+    mm.addField(m, images_field)
+    mm.addField(m, svg_field)
     mm.addField(m, original_image_field)
+    mm.addField(m, header_field)
+    mm.addField(m, footer_field)
+    # Add the new fields to the model
+    mm.setSortIdx(m, HEADER_FIELD_IDX)
     # Add template   
     t = mm.newTemplate("Image Q/A")
     t['qfmt'] = ImageQA_qfmt
@@ -109,26 +141,6 @@ def add_image_QA_model(col):
     mm.addTemplate(m, t)
     mm.add(m)
     return m
-
-def update_qfmt_afmt(col):
-    m = col.models.byName(IMAGE_QA_MODEL_NAME)
-    # We are assuming that the template list contains only one element.
-    # This will be true as long as no one has been trampling the model. 
-    t = m['tmpls'][0] 
-    t['qfmt'] = ImageQA_qfmt
-    t['afmt'] = ImageQA_afmt
-    return m
-
-def update_fields(col):
-    mm = col.models
-    m = mm.byName(IMAGE_QA_MODEL_NAME)
-    # Define the new Fields
-    header_field = mm.newField(HEADER_FIELD_NAME)
-    footer_field = mm.newField(FOOTER_FIELD_NAME)
-    # Add the new fields to the model
-    mm.addField(m, header_field)
-    mm.addField(m, footer_field)
-    mm.setSortIdx(m, HEADER_FIELD_IDX)
 
 ###############################################################
 def gen_uniq():
@@ -154,63 +166,45 @@ def fname2img(fname):
     return '<img src="' + fname + '" />'
 
 
-def add_QA_note(col, fname_q, fname_a, tags, fname_svg,
-                fname_original, header, footer, did):
-                        
+def add_QA_note(col, fnames_q, fnames_a, tags, media_dir, svg_fname,
+                 fname_original, header, footer, did):
+    
+    d = new_bnames(col, media_dir, fname_original)
+    
+    svgs_q = [fname2img(d[os.path.basename(fname)]) for fname in fnames_q]
+    svgs_a = [fname2img(d[os.path.basename(fname)]) for fname in fnames_a]
+    svg = fname2img(svg_fname)
+    bitmap = fname2img(d[os.path.basename(fname_original)])
+    
     m = col.models.byName(IMAGE_QA_MODEL_NAME)
     m['did'] = did
     n = notes.Note(col, model=m)
-    n.fields = [fname2img(fname_q),
-                fname2img(fname_a),
-                fname2img(fname_svg),
-                fname2img(fname_original),
-                header,
-                footer]
+    
+    n.fields = [make_images_field(svgs_q, svgs_a, bitmap, header, footer), # Images
+                svg, # SVG
+                bitmap, # Original Image (bitmap)
+                header, # Header
+                footer] # Footer
     
     for tag in tags:
         n.addTag(tag)
 
     col.addNote(n)
     
-    return n
-
-
-
-def add_QA_notes(col, fnames_q, fnames_a, tags, media_dir, svg_fname,
-                 fname_original, header, footer, did):
-    d = new_bnames(col, media_dir, fname_original)
-    nrOfNotes = 0
-    for (q,a) in zip(fnames_q, fnames_a):
-        add_QA_note(col,
-                    d[os.path.basename(q)],
-                    d[os.path.basename(a)],
-                    tags,
-                    d[os.path.basename(svg_fname)],
-                    d[os.path.basename(fname_original)],
-                    header,
-                    footer,
-                    did)
-        nrOfNotes += 1
-    return nrOfNotes
+    return len(fnames_q)
 
 # Updates the GUI and shows a tooltip
-def gui_add_QA_notes(fnames_q, fnames_a, media_dir, tags, svg_fname,
+def gui_add_QA_note(fnames_q, fnames_a, media_dir, tags, svg_fname,
                      fname_original, header, footer, did):
     col = mw.col
     mm = col.models
     if not mm.byName(IMAGE_QA_MODEL_NAME): # first time addon is run
         add_image_QA_model(col)
     m = mm.byName(IMAGE_QA_MODEL_NAME)
-    
-    # Upgrading from previous versions:
-    if m['tmpls'][0]['qfmt'] != ImageQA_qfmt: # still in version 2.0?
-        update_qfmt_afmt(col)
-    if len(m['flds']) == 4:
-        update_fields(col)
         
-    nrOfNotes = add_QA_notes(col, fnames_q, fnames_a,
-                             tags, media_dir, svg_fname,
-                             fname_original, header, footer, did)
+    nrOfNotes = add_QA_note(col, fnames_q, fnames_a,
+                            tags, media_dir, svg_fname,
+                            fname_original, header, footer, did)
     rm_media_dir(media_dir) # removes the media and the directory
     
     #  We must update the GUI so that the user knows that cards have
