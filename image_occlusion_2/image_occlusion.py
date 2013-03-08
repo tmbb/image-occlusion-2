@@ -104,6 +104,7 @@ class ImageOcc_Add(QtCore.QObject):
             command = select_rect_tool + set_svg_content + set_canvas
             
             mw.ImageOcc_Editor.svg_edit.eval(command)
+            mw.ImageOcc_Editor.show()
         
         except:
             initFill_color = mw.col.conf['image_occlusion_conf']['initFill[color]']
