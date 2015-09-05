@@ -90,8 +90,8 @@ def nr_of_shapes(svg):
 
 def set_color(elt, color):
     style = parseStyle(elt.get('style'))
-    style.update({'fill': color, 'fill-opacity': '1'})
-    elt.set('style', formatStyle(style))
+    style.update({'fill-opacity': '1'})
+    elt.set('fill', '#' + color)
 
 
 #  Applies the change of color to the children of the
