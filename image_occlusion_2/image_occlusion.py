@@ -6,6 +6,7 @@ from aqt.qt import *
 from anki import hooks
 from aqt import deckchooser
 from aqt import tagedit
+from anki.utils import json
 
 import os
 import tempfile
@@ -19,6 +20,13 @@ from config import SVG_EDIT_VERSION
 from resources import *
 
 image_occlusion_help_link = "http://tmbb.bitbucket.org/image-occlusion-2.html"
+
+# set various paths
+os_home_dir = os.path.expanduser('~')
+
+addons_folder = mw.pm.addonFolder()
+
+prefs_path = os.path.join(addons_folder, "image_occlusion_2", ".image_occlusion_2_prefs")
 
 svg_edit_dir = os.path.join(os.path.dirname(__file__),
                             'svg-edit',
@@ -55,17 +63,49 @@ FILE_DIALOG_FILTER = "Image Files (*.png *jpg *.jpeg *.gif)"
 default_conf = {'initFill[color]': 'FFFFFF',
                 'mask_fill_color': 'FF0000'}
 
+default_prefs = {"prev_image_dir": os_home_dir}
+
+
+def load_prefs(self):
+    # load local preferences
+    self.prefs = None
+    try:
+        with open(prefs_path, "r") as f:
+            self.prefs = json.load(f)
+    except:
+        # file does not exist or is corrupted: fall back to default
+        with open(prefs_path, "w") as f:
+            self.prefs = default_prefs
+            json.dump(self.prefs, f)
+
+def save_prefs(self):
+    # save local preferences to disk
+    with open(prefs_path, "w") as f:
+        json.dump(self.prefs, f)
+
 
 class ImageOcc_Add(QtCore.QObject):
     def __init__(self, ed):
         super(QtCore.QObject, self).__init__()
         self.ed = ed
         self.mw = mw
+
+        # check if config exists
         if not 'image_occlusion_conf' in mw.col.conf:
             # If addon has never been run
             self.mw.col.conf['image_occlusion_conf'] = default_conf
 
+        # load preferences
+        load_prefs(self)
+
     def add_notes(self):
+
+        # retrieve last used image directory
+        prev_image_dir = self.prefs["prev_image_dir"]
+        # if directory not valid or empty use system home directory
+        if not os.path.isdir(prev_image_dir):
+            prev_image_dir = os_home_dir   
+
         clip = QApplication.clipboard()
         if clip.mimeData().imageData():
             handle, image_path = tempfile.mkstemp(suffix='.png')
@@ -79,18 +119,21 @@ class ImageOcc_Add(QtCore.QObject):
             except:
                 image_path = QtGui.QFileDialog.getOpenFileName(None,  # parent
                                                       FILE_DIALOG_MESSAGE,
-                                                      os.path.expanduser('~'),
+                                                      prev_image_dir,
                                                       FILE_DIALOG_FILTER)
 
         else:
             image_path = QtGui.QFileDialog.getOpenFileName(None,  # parent
                                                        FILE_DIALOG_MESSAGE,
-                                                       os.path.expanduser('~'),
+                                                       prev_image_dir,
                                                        FILE_DIALOG_FILTER)
 
         # The following code is common to both branches of the 'if'
         if image_path:
             self.mw.image_occlusion2_image_path = image_path
+            # store image directory in local preferences
+            self.prefs["prev_image_dir"] = os.path.dirname( image_path )
+            save_prefs(self)
             self.call_ImageOcc_Editor(self.mw.image_occlusion2_image_path)
 
     def call_ImageOcc_Editor(self, path):
@@ -105,8 +148,9 @@ class ImageOcc_Add(QtCore.QObject):
             select_rect_tool = "svgCanvas.setMode('rect'); "
             set_svg_content = 'svg_content = \'%s\'; ' % svg.replace('\n', '')
             set_canvas = 'svgCanvas.setSvgString(svg_content);'
+            set_zoom = "svgCanvas.zoomChanged('', 'canvas');"
 
-            command = select_rect_tool + set_svg_content + set_canvas
+            command = select_rect_tool + set_svg_content + set_canvas + set_zoom
 
             mw.ImageOcc_Editor.svg_edit.eval(command)
             mw.ImageOcc_Editor.show()
@@ -162,8 +206,8 @@ def get_params_for_add_notes():
 def add_image_occlusion_button(ed):
     ed.image_occlusion = ImageOcc_Add(ed)
     ed._addButton("new_occlusion", ed.image_occlusion.add_notes,
-            key="Alt+o", size=False,  # text=_("Image Occlusion"),
-            native=True, canDisable=False)
+            _("Alt+o"), _("Image Occlusion (Alt+o)"),
+            canDisable=False)
 
 
 class ImageOcc_Editor(QWidget):
@@ -242,8 +286,53 @@ class ImageOcc_Editor(QWidget):
         # list appears, taking away screen real estate for no reason.
         self.header_edit.setFocus()
 
+        # define and connect key bindings
+
+        # CTRL+F - fit to canvas
+        self.connect(QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_F), self), 
+            QtCore.SIGNAL('activated()'), self.fit_image_canvas)
+        # CTRL+1 - focus header field
+        self.connect(QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_1), self), 
+            QtCore.SIGNAL('activated()'), self.header_edit.setFocus)
+        # CTRL+2 - focus footer field
+        self.connect(QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_2), self), 
+            QtCore.SIGNAL('activated()'), self.footer_edit.setFocus)
+        # CTRL+I - focus SVG-Edit
+        self.connect(QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_I), self), 
+            QtCore.SIGNAL('activated()'), self.svg_edit.setFocus)
+        # CTRL+T - focus tags field
+        self.connect(QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_T), self), 
+            QtCore.SIGNAL('activated()'), self.tags_edit.setFocus)
+        # CTRL+R - reset all fields
+        self.connect(QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_R), self), 
+            QtCore.SIGNAL('activated()'), self.reset_all_fields)
+        # CTRL + O - add overlapping note
+        self.connect(QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_O), self), 
+            QtCore.SIGNAL('activated()'), self.add_overlapping)
+        # CTRL + N - add non-overlapping note
+        self.connect(QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_N), self), 
+            QtCore.SIGNAL('activated()'), self.add_nonoverlapping)
+        # Escape - Close Image Occlusion window
+        self.connect(QtGui.QShortcut(QtGui.QKeySequence(Qt.Key_Escape), self), 
+            QtCore.SIGNAL('activated()'), self.close)
+
         self.setWindowTitle('Image Occlusion Editor')
         self.show()
+
+    # functions related to key-bindings
+
+    def fit_image_canvas(self):
+        command = "svgCanvas.zoomChanged('', 'canvas');"
+        self.svg_edit.eval(command)
+    def add_nonoverlapping(self): 
+        command = "var svg_contents = svgCanvas.svgCanvasToString(); pyObj.add_notes_non_overlapping(svg_contents);"
+        self.svg_edit.eval(command)
+    def add_overlapping(self): 
+        command = "var svg_contents = svgCanvas.svgCanvasToString(); pyObj.add_notes_overlapping(svg_contents);"
+        self.svg_edit.eval(command) 
+    def reset_all_fields(self):
+        self.header_edit.setText("")
+        self.footer_edit.setText("")
 
 
 class ImageOcc_Options(QtGui.QWidget):
